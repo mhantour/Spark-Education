@@ -1,7 +1,7 @@
 ﻿# Spark-Education
 
-#install dependencies
+# install dependencies:
 pip install -r requirements.txt
 
-#run application
+# run application
 flask run
