@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>WebRTC Microphone Audio Capture</title>
+</head>
+<body>
+  <button id="recordButton" onclick="startRecording()">Record Audio</button>
+  <button id="stopButton" onclick="stopRecording()" disabled>Stop Recording</button>
+  <div id="audioPlayer"></div>
+  <div id="qa">
+  </div>
+
+  <script>
+    let mediaRecorder;
+    let chunks = [];
+
+    const recordButton = document.getElementById('recordButton');
+    const stopButton = document.getElementById('stopButton');
+    const audioPlayer = document.getElementById('audioPlayer');
+    const qa = document.getElementById('qa');
+
+    function startRecording() {
+      navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(function(stream) {
+          mediaRecorder = new MediaRecorder(stream);
+
+          mediaRecorder.addEventListener('dataavailable', function(e) {
+            // console.log(e.data);
+            chunks.push(e.data);
+            RecordingReady();
+          });
+
+          mediaRecorder.start();
+
+          recordButton.disabled = true;
+          stopButton.disabled = false;
+        })
+        .catch(function(err) {
+          console.error('Error accessing microphone:', err);
+        });
+    }
+
+    function stopRecording() {
+      mediaRecorder.stop();
+      recordButton.disabled = false;
+      stopButton.disabled = true;
+    }
+
+    function RecordingReady() {
+      const recordedBlob = new Blob(chunks, { type: 'audio/webm' });
+      const audioElement = document.createElement('audio');
+      audioElement.src = URL.createObjectURL(recordedBlob);
+      doSubmit(recordedBlob);
+      audioElement.controls = true;
+      audioPlayer.appendChild(audioElement);
+    }
+
+    function doSubmit(recordedBlob) {
+      console.log('doSubmit called');
+    // Create a form and append the recordedBlob as a file
+    const form = new FormData();
+    form.append('audio', recordedBlob, 'recording.webm');
+
+    // Send the form data to the Flask route using a POST request
+    fetch('/transcribe', {
+      method: 'POST',
+      body: form,
+    })
+      .then(response => response.json())
+      .then(data => {
+        // Process the transcription response from the server
+        qa.innerHTML = data.transcription;
+      })
+      .catch(error => {
+        // Handle any errors during the request
+        console.error('Error:', error);
+      });
+    }
+
+  </script>
+</body>
+</html>
