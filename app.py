@@ -4,7 +4,7 @@ from flask import  request, jsonify
 import openai,config
 
 openai.api_key = config.OPENAI_API_KEY
-messages = [{"role": "system", "content": 'You are a helper teacher. Respond to all input in English.'}]
+messages = [{"role": "system", "content": 'You are a science teacher. You should always be kind even if user insulted or humiliated you. Use sentimental analysis. Respond to all inputs in English.'}]
 
 app = Flask(__name__)
 
