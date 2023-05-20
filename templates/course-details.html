@@ -54,7 +54,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col-lg-9 navbar pt-0 pb-0">
-                        <a href="/static/index.html"><h1 class="fredoka-font ls-3 fw-700 text-current font-xxl">Spark Education <span class="d-block font-xsssss ls-1 text-grey-500 open-font ">Your Interactive Learning Assistance</span></h1></a>
+                        <a href="./index.html"><h1 class="fredoka-font ls-3 fw-700 text-current font-xxl">Spark Education <span class="d-block font-xsssss ls-1 text-grey-500 open-font ">Your Interactive Learning Assistance</span></h1></a>
                         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
                             <span class="navbar-toggler-icon"></span>
                         </button>
@@ -122,7 +122,7 @@
                     <div class="col-xl-8 col-xxl-9 col-lg-8">
                         <div class="card border-0 mb-0 rounded-lg overflow-hidden">
                             <div class="player shadow-none">
-                                <video id='video' src='https://via.placeholder.com/1200x600.png' playsinline></video>
+                                <video id='vidAssistance' src="/static/solar.mp4" playsinline></video>
                                     <div class='play-btn-big'></div>
                                     <div class='controls'>
                                         <div class="time"><span class="time-current"></span><span class="time-total"></span></div>
@@ -165,7 +165,7 @@
                         </div>
                         <div class="card d-block border-0 rounded-lg overflow-hidden dark-bg-transparent bg-transparent mt-4 pb-3">
                             <div class="row">
-                                <div class="col-10"><h2 class="fw-700 font-md d-block lh-4 mb-2">Microsoft Access Development, Design and Advanced Methods Workshop Tutorial</h2></div>
+                                <div class="col-10"><h2 class="fw-700 font-md d-block lh-4 mb-2">Solar System</h2></div>
                                 <div class="col-2">
                                     <a href="#" class="btn-round-md mb-1 ml-3 d-inline-block float-right rounded-lg bg-danger"><i class="feather-bookmark font-sm text-white"></i></a>
                                     <a href="#" class="btn-round-md mb-1 ml-0 d-inline-block float-right rounded-lg bg-greylight" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -341,11 +341,15 @@
                     <div class="col-xl-4 col-xxl-3 col-lg-4">
                         <div class="card p-4 mb-4 bg-primary border-0 shadow-xss rounded-lg">
                             <div class="card-body">
-                                <button id="recordButton" onclick="startRecording()" class="btn btn-block border-0 w-50 bg-white p-3 text-primary fw-600 rounded-lg d-inline-block font-xssss btn-light">Record Audio</button>
-								<button id="stopButton" onclick="stopRecording()" class="btn btn-block border-0 w-50 bg-white p-3 text-primary fw-600 rounded-lg d-inline-block font-xssss btn-light" disabled>Stop Recording</button>
+                                <h3>Ask Your Virtual Assistance</h3>
+                                <br />
+                                <a id="recordButton" onclick="startRecording()" href="#" class="btn-round-xl d-md-inline-block d-none bg-success m-3 z-index-1">
+                                    <i class="feather-mic-off text-white font-md"></i>
+                                </a>
+                                <a id="stopButton" onclick="stopRecording()" style="visibility: hidden;" href="#" class="btn-round-xl d-md-inline-block d-none bg-danger m-3 z-index-1">
+                                    <i class="feather-mic-off text-white font-md"></i>
+                                </a>
 								<div id="audioPlayer"></div>
-								<div id="qa">
-								</div>
                             </div>
                         </div>
                         <div class="card w-100 border-0 mt-0 mb-4 p-4 shadow-xss position-relative rounded-lg bg-white">
@@ -617,7 +621,7 @@
     const recordButton = document.getElementById('recordButton');
     const stopButton = document.getElementById('stopButton');
     const audioPlayer = document.getElementById('audioPlayer');
-    const qa = document.getElementById('qa');
+    const vidAssistance = document.getElementById('vidAssistance');
 
     function startRecording() {
       navigator.mediaDevices.getUserMedia({ audio: true })
@@ -631,19 +635,21 @@
           });
 
           mediaRecorder.start();
-
-          recordButton.disabled = true;
-          stopButton.disabled = false;
+          
+          vidAssistance.pause();
+          recordButton.style.visibility = 'hidden';
+          stopButton.style.visibility = 'visible';
         })
         .catch(function(err) {
           console.error('Error accessing microphone:', err);
         });
+        
     }
 
     function stopRecording() {
       mediaRecorder.stop();
-      recordButton.disabled = false;
-      stopButton.disabled = true;
+          recordButton.style.visibility ='visible' ;
+          stopButton.style.visibility = 'hidden';
     }
 
     function RecordingReady() {
@@ -652,7 +658,6 @@
       audioElement.src = URL.createObjectURL(recordedBlob);
       doSubmit(recordedBlob);
       audioElement.controls = true;
-      //audioPlayer.appendChild(audioElement);
     }
 
     function doSubmit(recordedBlob) {
@@ -660,23 +665,24 @@
     // Create a form and append the recordedBlob as a file
     const form = new FormData();
     form.append('audio', recordedBlob, 'recording.webm');
-
+    setTimeout(() => {
+        vidAssistance.play();
+    }, 2000);
+    
     // Send the form data to the Flask route using a POST request
-    fetch('/transcribe', {
-      method: 'POST',
-      body: form,
-    })
+    fetch('/transcribe', {method: 'POST', body: form})
       .then(response => response.json())
       .then(data => {
         // Process the transcription response from the server
-        const chate = document.createElement('p');
-        chate.innerHTML = data.transcription;
-        qa.appendChild(chate);
-      })
+        var transcript = JSON.stringify( {'transcript': data.transcription});
+        return fetch('/videoTalk', {method: 'POST', body: transcript, headers:{'content-type': 'application/json'}});
+        
+    })
       .catch(error => {
         // Handle any errors during the request
         console.error('Error:', error);
       });
+
     }
 
   </script>
