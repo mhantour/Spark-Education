@@ -1,7 +1,7 @@
 from flask import Flask
 from flask import render_template
 from flask import  request, jsonify
-import txtToImg
+import txtToImg, textToVideo
 import openai,config
 import requests
 import json
@@ -108,3 +108,11 @@ def videoTalk():
     videoId = createVideo(content['transcript'])
     videoURL = getTalk(videoId)
     return videoURL
+
+
+@app.route("/textToVideo/<string:prompt>")
+def createVideoAPI(prompt):
+    print(prompt)
+    # return video path
+    return textToVideo.createVideo(prompt)
+

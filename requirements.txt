@@ -1,2 +1,10 @@
 openai
 flask
+torch==2.0.0 
+git+https://github.com/huggingface/diffusers 
+transformers 
+accelerate 
+imageio[ffmpeg]
+IPython
+matplotlib
+    
