@@ -3,12 +3,10 @@ import torch
 from diffusers import DiffusionPipeline, DPMSolverMultistepScheduler
 from diffusers.utils import export_to_video
 from IPython.display import HTML
-import base64
 import config
 import imageio
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
-# from skimage.transform import resize
 
 
 def display_video(video):
@@ -39,8 +37,7 @@ def createVideo(promptVar):
 
     video_frames = pipe(prompt, negative_prompt=negative_prompt, num_inference_steps=config.Video_Steps, num_frames=num_frames).frames
     video_path = export_to_video(video_frames)
-    # video_path = "C:\\Users\\903590\\AppData\\Local\\Temp\\tmphyz2w1on.mp4"
     video = imageio.mimread(video_path)  #Loading video
-    videoHtml = display_video(video)#.to_html5_video()  #Inline video display in HTML5
+    videoHtml = display_video(video) #Inline video display in HTML5
 
     return videoHtml.to_html5_video()   # return video_path

@@ -1,7 +1,7 @@
 from flask import Flask
 from flask import render_template
 from flask import  request, jsonify
-import txtToImg, txtToVideo
+import txtToImg, textToVideo
 import openai,config
 
 openai.api_key = config.OPENAI_API_KEY
@@ -49,8 +49,8 @@ def createImgAPI(prompt):
     # return image tag with picture
     return txtToImg.createImg(prompt)
 
-@app.route("/txtToVideo/<string:prompt>")
+@app.route("/textToVideo/<string:prompt>")
 def createVideoAPI(prompt):
     print(prompt)
     # return video path
-    return txtToVideo.createVideo(prompt)
+    return textToVideo.createVideo(prompt)
