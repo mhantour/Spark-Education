@@ -122,7 +122,7 @@
                     <div class="col-xl-8 col-xxl-9 col-lg-8">
                         <div class="card border-0 mb-0 rounded-lg overflow-hidden">
                             <div class="player shadow-none">
-                                <video id='vidAssistance' src="/static/solar.mp4" playsinline></video>
+                                <video id='vidAssistance' src="" playsinline></video>
                                     <div class='play-btn-big'></div>
                                     <div class='controls'>
                                         <div class="time"><span class="time-current"></span><span class="time-total"></span></div>
@@ -350,6 +350,7 @@
                                     <i class="feather-mic-off text-white font-md"></i>
                                 </a>
 								<div id="audioPlayer"></div>
+                                <div id="question"></div>
                             </div>
                         </div>
                         <div class="card w-100 border-0 mt-0 mb-4 p-4 shadow-xss position-relative rounded-lg bg-white">
@@ -622,6 +623,8 @@
     const stopButton = document.getElementById('stopButton');
     const audioPlayer = document.getElementById('audioPlayer');
     const vidAssistance = document.getElementById('vidAssistance');
+    const question = document.getElementById('question');
+    
 
     function startRecording() {
       navigator.mediaDevices.getUserMedia({ audio: true })
@@ -665,15 +668,18 @@
     // Create a form and append the recordedBlob as a file
     const form = new FormData();
     form.append('audio', recordedBlob, 'recording.webm');
-    setTimeout(() => {
-        vidAssistance.play();
-    }, 2000);
+
     
     // Send the form data to the Flask route using a POST request
     fetch('/transcribe', {method: 'POST', body: form})
       .then(response => response.json())
       .then(data => {
         // Process the transcription response from the server
+        const chate = document.createElement('p');
+        chate.innerHTML = data.transcription;
+        question.appendChild(chate);
+        vidAssistance.src='/static/solar.mp4';
+        vidAssistance.play();
         var transcript = JSON.stringify( {'transcript': data.transcription});
         return fetch('/videoTalk', {method: 'POST', body: transcript, headers:{'content-type': 'application/json'}});
         

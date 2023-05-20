@@ -47,7 +47,7 @@ def transcribe():
     chat_transcript = ""
     for message in messages:
         if message['role'] != 'system':
-            chat_transcript = message['content']
+            chat_transcript = message['role'] + ": " + message['content'] + "<br/>"
 
     return jsonify({'transcription': chat_transcript})
 
