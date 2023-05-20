@@ -1,6 +1,7 @@
 from flask import Flask
 from flask import render_template
 from flask import  request, jsonify
+import txtToImg
 import openai,config
 
 openai.api_key = config.OPENAI_API_KEY
@@ -41,4 +42,10 @@ def transcribe():
             chat_transcript = message['role'] + ": " + message['content'] + "<br/>"
 
     return jsonify({'transcription': chat_transcript})
+
+@app.route("/txtToImg/<string:prompt>")
+def createImgAPI(prompt):
+    print(prompt)
+    # return txtToImg.statImg()
+    return txtToImg.createImg(prompt)
 
