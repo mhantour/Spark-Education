@@ -11,7 +11,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def hello_world():
-    return render_template('record-webrtc.html')
+    return render_template('course-details.html')
 
 @app.route('/transcribe', methods=['GET'])
 def transcribeGet():
@@ -31,7 +31,7 @@ def transcribe():
     
     messages.append({"role": "user", "content": transcript["text"]})
     
-    response = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=messages)
+    response = openai.ChatCompletion.create(model="gpt-4", messages=messages)
 
     system_message = response["choices"][0]["message"]
     messages.append(system_message)
@@ -39,7 +39,7 @@ def transcribe():
     chat_transcript = ""
     for message in messages:
         if message['role'] != 'system':
-            chat_transcript += message['role'] + ": " + message['content'] + "<br/>"
+            chat_transcript = message['role'] + ": " + message['content'] + "<br/>"
 
     return jsonify({'transcription': chat_transcript})
 
