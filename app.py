@@ -11,7 +11,7 @@ import time
 app = Flask(__name__)
 
 openai.api_key = config.OPENAI_API_KEY
-messages = [{"role": "system", "content": 'You are a science teacher. You should always be kind even if user insulted or humiliated you. Use sentimental analysis. Respond to all inputs in English.'}]
+messages = [{"role": "system", "content": 'You are a science teacher. You should always be kind even if user insulted or humiliated you. Use sentimental analysis. Respond to all inputs in English whatever the input language.'}]
 
 character_image= "https://create-images-results.d-id.com/api_docs/assets/noelle.jpeg"
 #prompt_msg = "Our solar system consists of our star, the Sun, and everything bound to it by gravity – the planets Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, and Neptune; dwarf planets such as Pluto; dozens of moons; and millions of asteroids, comets, and meteoroids."
